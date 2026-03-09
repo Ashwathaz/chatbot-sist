@@ -11,13 +11,11 @@
       --primary-color: #0c00ff;
       --secondary-color: #ff0055;
       --bg-gradient: linear-gradient(135deg, #0c00ff, #ff0055);
-      --glass-bg: rgba(255, 255, 255, 0.08);
-      /* Increased transparency */
-      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.15);
       --text-main: #ffffff;
-      --user-msg-bg: rgba(12, 0, 255, 0.3);
-      --bot-msg-bg: rgba(255, 255, 255, 0.05);
-      /* Increased transparency */
+      --user-msg-bg: rgba(12, 0, 255, 0.15);
+      --bot-msg-bg: rgba(255, 255, 255, 0.02);
     }
 
     * {
@@ -47,7 +45,8 @@
       background: url('/static/chatbot_bg.png') no-repeat center center;
       background-size: cover;
       z-index: -1;
-      filter: brightness(0.85);
+      filter: brightness(1);
+      /* Full brightness for better visibility through glass */
       /* Background more clearly visible */
       transform: scale(1.02);
       animation: subtleZoom 20s infinite alternate ease-in-out;
@@ -68,9 +67,8 @@
       max-width: 95vw;
       height: 85vh;
       background: var(--glass-bg);
-      backdrop-filter: blur(15px);
-      /* Reduced blur for more transparency */
-      -webkit-backdrop-filter: blur(15px);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid var(--glass-border);
       border-radius: 30px;
       display: flex;
@@ -95,7 +93,7 @@
     /* Header */
     header {
       padding: 20px 30px;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.1);
       border-bottom: 1px solid var(--glass-border);
       display: flex;
       align-items: center;
@@ -227,7 +225,7 @@
     input[type="text"] {
       width: 100%;
       padding: 15px 25px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--glass-border);
       border-radius: 15px;
       color: white;
