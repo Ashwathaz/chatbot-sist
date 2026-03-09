@@ -6,14 +6,13 @@ import google.generativeai as genai
 # ==============================
 # CONFIGURATION
 # ==============================
-# 🛑 CRITICAL FIX 1: REMOVED HARDCODED API KEY. 
-# The SDK will now automatically look for the GEMINI_API_KEY environment variable.
-# You MUST set this variable in your environment or on your deployment platform (like Render).
+# The SDK is now configured with a hardcoded API key.
+# Make sure your key is valid and keep it secure.
 try:
-    # This will look for the key in the environment variable GEMINI_API_KEY
-    genai.configure() 
+    # Hardcoded API key as requested
+    genai.configure(api_key="AIzaSyBPGMn9EHpFI0xWUaFWpYt9i3rPF_I6KZ4") 
 except Exception as e:
-    print(f"WARNING: Gemini configuration failed. Is GEMINI_API_KEY set? Error: {e}")
+    print(f"WARNING: Gemini configuration failed. Is the API valid? Error: {e}")
     
 LOG_FILE = "chat_log.json"
 
