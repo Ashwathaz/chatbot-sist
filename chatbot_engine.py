@@ -1090,12 +1090,12 @@ def get_gemini_response(user_input):
         return "Gemini model is not configured. Please check the server's API key and connection."
 
     try:
-        # 🛑 CHAT FIX: send_message automatically uses the history managed by chat_session
+        # Increased max_output_tokens to prevent truncation
         response = chat_session.send_message(
             user_input,
             generation_config={
                 "temperature": 0.7,
-                "max_output_tokens": 512,
+                "max_output_tokens": 1024, 
             }
         )
 
@@ -1103,12 +1103,12 @@ def get_gemini_response(user_input):
         return bot_reply
 
     except Exception as e:
-        # More robust error handling for API issues
-        return f"⚠️ Error fetching Gemini response. (Is the API Key valid?): {str(e)}"
+        return f"⚠️ Error fetching Gemini response: {str(e)}"
 
 
 def generate_response(user_input):
-    """Main response generator: checks FAQ first, then falls back to Gemini."""
+    """Main response generator: checks FAQ first with strict matching, then Gemini."""
+    import re
     lower_input = user_input.lower()
 
     # Special: Time/Date
@@ -1117,9 +1117,13 @@ def generate_response(user_input):
     if "date" in lower_input:
         return f"📅 Today's date is {datetime.datetime.now().strftime('%Y-%m-%d')}."
 
-    # Check static dictionary
+    # Check static dictionary with word-boundary matching to prevent hijacking Gemini
     for key in faq_data:
-        if key in lower_input:
+        # Simplify key (remove underscores/numbers if they are just for uniqueness)
+        clean_key = re.sub(r'_\d+$', '', key).replace('_', ' ')
+        
+        # Check if the clean_key exists as a standalone phrase in the user input
+        if re.search(r'\b' + re.escape(clean_key) + r'\b', lower_input):
             return faq_data[key]
 
     # Gemini fallback

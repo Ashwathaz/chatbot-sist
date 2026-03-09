@@ -1,0 +1,13 @@
+venv/
+.git/
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.db
+.sqlite
+.log
+chat_log.json
+Dockerfile
+.dockerignore

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sathyabama AI - Academic Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #0c00ff;
+      --secondary-color: #ff0055;
+      --bg-gradient: linear-gradient(135deg, #0c00ff, #ff0055);
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      /* Increased transparency */
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --text-main: #ffffff;
+      --user-msg-bg: rgba(12, 0, 255, 0.3);
+      --bot-msg-bg: rgba(255, 255, 255, 0.05);
+      /* Increased transparency */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #050505;
+      overflow: hidden;
+      color: var(--text-main);
+    }
+
+    /* AI Generated Background */
+    .hero-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('/static/chatbot_bg.png') no-repeat center center;
+      background-size: cover;
+      z-index: -1;
+      filter: brightness(0.85);
+      /* Background more clearly visible */
+      transform: scale(1.02);
+      animation: subtleZoom 20s infinite alternate ease-in-out;
+    }
+
+    @keyframes subtleZoom {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.05);
+      }
+    }
+
+    .main-container {
+      width: 850px;
+      max-width: 95vw;
+      height: 85vh;
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      /* Reduced blur for more transparency */
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      border-radius: 30px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Header */
+    header {
+      padding: 20px 30px;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .university-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #fff;
+      padding: 5px;
+      border: 2px solid var(--primary-color);
+      box-shadow: 0 0 15px rgba(12, 0, 255, 0.3);
+    }
+
+    .header-info h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .header-info p {
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #00ff88;
+      border-radius: 50%;
+      margin-right: 5px;
+      box-shadow: 0 0 10px #00ff88;
+    }
+
+    /* Chat Area */
+    #messages {
+      flex: 1;
+      padding: 25px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--glass-border) transparent;
+    }
+
+    #messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #messages::-webkit-scrollbar-thumb {
+      background: var(--glass-border);
+      border-radius: 10px;
+    }
+
+    .message {
+      padding: 14px 20px;
+      border-radius: 20px;
+      max-width: 75%;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      position: relative;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background: var(--user-msg-bg);
+      border: 1px solid rgba(12, 0, 255, 0.3);
+      border-bottom-right-radius: 4px;
+      color: #fff;
+    }
+
+    .bot-message {
+      align-self: flex-start;
+      background: var(--bot-msg-bg);
+      border: 1px solid var(--glass-border);
+      border-bottom-left-radius: 4px;
+    }
+
+    .bot-name {
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--secondary-color);
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .user-name {
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #00eaff;
+      display: block;
+      text-align: right;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Input Area */
+    .input-container {
+      padding: 20px 30px 30px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 15px 25px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 15px;
+      color: white;
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input[type="text"]:focus {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 20px rgba(12, 0, 255, 0.2);
+    }
+
+    button#sendBtn {
+      background: var(--bg-gradient);
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 15px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.3s;
+      box-shadow: 0 10px 20px rgba(255, 0, 85, 0.2);
+    }
+
+    button#sendBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 25px rgba(255, 0, 85, 0.4);
+    }
+
+    button#sendBtn svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: white;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Loader */
+    .typing {
+      display: flex;
+      gap: 5px;
+      padding: 10px 0;
+    }
+
+    .typing span {
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+
+    .typing span:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    .typing span:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      80%,
+      100% {
+        transform: scale(0);
+      }
+
+      40% {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hero-bg"></div>
+
+  <div class="main-container">
+    <header>
+      <img src="/static/bot_icon.png" class="university-logo" alt="NEXA AI">
+      <div class="header-info">
+        <h1>Sathyabama Academic AI</h1>
+        <p><span class="status-dot"></span> Online Assistant</p>
+      </div>
+    </header>
+
+    <div id="messages">
+      <div class="message bot-message">
+        <span class="bot-name">NEXA AI</span>
+        Hello! I'm NEXA, your virtual assistant for Sathyabama University. How can I help you regarding courses,
+        placements, or campus life today?
+      </div>
+    </div>
+
+    <div class="input-container">
+      <div class="input-wrapper">
+        <input type="text" id="userInput" placeholder="Type your academic query here..." autocomplete="off">
+      </div>
+      <button id="sendBtn">
+        <svg viewBox="0 0 24 24">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const messages = document.getElementById('messages');
+
+    function formatResponse(text) {
+      return text.replace(/\n/g, "<br>");
+    }
+
+    function addMessage(text, isUser = false) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = isUser ? 'user-name' : 'bot-name';
+      nameSpan.innerText = isUser ? 'You' : 'NEXA AI';
+
+      const content = document.createElement('div');
+      content.innerHTML = formatResponse(text);
+
+      msgDiv.appendChild(nameSpan);
+      msgDiv.appendChild(content);
+      messages.appendChild(msgDiv);
+
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showTyping() {
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'message bot-message typing-indicator';
+      typingDiv.innerHTML = '<span class="bot-name">NEXA AI</span><div class="typing"><span></span><span></span><span></span></div>';
+      typingDiv.id = 'typingIndicator';
+      messages.appendChild(typingDiv);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function removeTyping() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.remove();
+    }
+
+    function handleSend() {
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      addMessage(msg, true);
+      input.value = '';
+
+      showTyping();
+
+      fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      })
+        .then(res => res.json())
+        .then(data => {
+          removeTyping();
+          addMessage(data.response);
+        })
+        .catch(() => {
+          removeTyping();
+          addMessage("⚠️ Error: Check university server connection.");
+        });
+    }
+
+    sendBtn.addEventListener('click', handleSend);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleSend();
+    });
+  </script>
+</body>
+
+</html>

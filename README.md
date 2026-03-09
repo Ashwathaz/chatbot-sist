@@ -21,182 +21,30 @@ Observability using Prometheus & Grafana
 Production-style infrastructure separation
 
 🏗️ Architecture
-4
-Architecture Components
-Component	Description
-Chatbot VM	Hosts Dockerized Flask application
-Docker Container	Runs chatbot service on port 7234
-Prometheus VM	Scrapes chatbot metrics
-Grafana	Visualizes real-time dashboards
-GCP Compute Engine	Cloud infrastructure
+The Sathyabama AI Chatbot features a modern, cloud-native architecture:
+- **Frontend**: Premium glassmorphism UI built with HTML5, CSS3, and JavaScript.
+- **Backend**: Flask-based REST API with asynchronous Gemini 2.0 integration.
+- **AI Engine**: Hybrid model using static FAQ mapping and Google Generative AI fallback.
+- **Containerization**: Dockerized deployment optimized for GCP Compute Engine.
+
 ✨ Features
+- **Modern UI**: Sleek, resume-ready interface with AI-generated university-themed backgrounds.
+- **Intelligent Responses**: Leverages Google Gemini for natural language understanding.
+- **Real-time Interaction**: Asynchronous chat experience with typing indicators.
+- **Observability**: Ready for Prometheus and Grafana monitoring.
 
-AI-powered responses using Google Gemini
-
-Static FAQ-based university information
-
-Dynamic intelligent query handling
-
-Web-based chatbot interface
-
-Dockerized application
-
-Cloud-hosted on GCP VM
-
-Real-time metrics exposure
-
-Dedicated monitoring instance
-
-Custom Grafana dashboards
-
-🛠️ Tech Stack
-Backend
-
-Python
-
-Flask
-
-NLTK
-
-Google Generative AI (Gemini API)
-
-Frontend
-
-HTML
-
-CSS
-
-JavaScript
-
-DevOps & Cloud
-
-Docker
-
-Linux (Ubuntu)
-
-Google Cloud Platform (Compute Engine)
-
-Firewall Configuration
-
-Monitoring
-
-Prometheus
-
-Grafana
-
-Flask Metrics Exporter
-
-📦 Local Installation
-# Clone repository
-git clone https://github.com/yourusername/sathyabama_chatbot.git
-cd sathyabama_chatbot
-
-# Create virtual environment
-python -m venv venv
-
-# Activate environment
-# Windows
-venv\Scripts\activate
-
-# Linux/Mac
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Download NLTK data
-python -m nltk.downloader punkt wordnet omw-1.4
-
-# Run application
-python app.py
-
-Access locally:
-
-http://localhost:7234
-🐳 Docker Deployment
-Build Image
-docker build -t sathyabama-chatbot .
-Run Container
-docker run -d -p 7234:7234 --name chatbot sathyabama-chatbot
-Verify
-docker ps
-
-Application URL:
-
-http://<VM_EXTERNAL_IP>:7234
-☁️ GCP Deployment
-
-Platform:
-
-Google Cloud Compute Engine (Ubuntu VM)
-
-Application Port:
-
-7234
-
-Firewall Ports Enabled:
-
-Port	Purpose
-7234	Chatbot Application
-9090	Prometheus
-3000	Grafana
-
-Example firewall rule:
-
-gcloud compute firewall-rules create allow-chatbot \
---allow tcp:7234
-📊 Monitoring & Observability
-Prometheus
-
-Installed on a separate VM instance
-
-Scrapes chatbot metrics endpoint
-
-Example scrape config:
-
-scrape_configs:
-  - job_name: "chatbot"
-    static_configs:
-      - targets: ["<CHATBOT_PRIVATE_IP>:7234"]
-
-Metrics endpoint:
-
-http://<CHATBOT_IP>:7234/metrics
-Grafana
-
-Connected to Prometheus as data source
-
-Custom dashboards created
-
-Metrics monitored:
-
-Total HTTP requests
-
-Request latency
-
-CPU usage
-
-Memory usage
-
-Application uptime
-
-Container health
-
-Access:
-
-http://<PROMETHEUS_VM_IP>:3000
 📂 Project Structure
 sathyabama-chatbot/
-
-├── app.py
-├── Dockerfile
-├── requirements.txt
-├── .env
+├── app.py                # Flask Application Entry
+├── chatbot_engine.py      # AI & FAQ Logic
+├── Dockerfile            # Container Configuration
+├── .dockerignore         # Docker Build Optimization
+├── requirements.txt      # Python Dependencies
 ├── templates/
-│   └── index.html
-├── static/
-│   └── style.css
-└── README.md
+│   └── index.html        # Modern Glassmorphism UI
+└── static/               # AI Generated Assets
+    ├── chatbot_bg.png
+    └── bot_icon.png
 🧠 DevOps Concepts Implemented
 
 Application containerization
@@ -213,7 +61,57 @@ Dashboard visualization
 
 Linux-based infrastructure management
 
-🚀 Future Enhancements
+� Local Installation
+```bash
+# Clone repository
+git clone https://github.com/yourusername/sathyabama_chatbot.git
+cd sathyabama_chatbot
+
+# Create virtual environment
+python -m venv venv
+
+# Activate environment
+# Windows
+venv\Scripts\activate
+# Linux/Mac
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Download NLTK data (handled automatically in Docker)
+python -m nltk.downloader punkt wordnet omw-1.4
+
+# Run application
+python app.py
+```
+
+🐳 Docker Deployment
+```bash
+# Build the production image
+docker build -t sathyabama-chatbot .
+
+# Run the container (Mapping port 7234)
+# Note: You must provide your GEMINI_API_KEY as an env variable
+docker run -d \
+  -p 7234:7234 \
+  --name chatbot \
+  -e GEMINI_API_KEY="your_api_key_here" \
+  sathyabama-chatbot
+
+# Verify container status
+docker ps
+
+# Check logs if needed
+docker logs -f chatbot
+```
+
+☁️ GCP Deployment (GCE)
+- **Engine**: Google Compute Engine (Ubuntu 22.04 LTS)
+- **Firewall**: Enable **TCP 7234** for app traffic and **9090/3000** for monitoring.
+- **Access**: `http://<VM_EXTERNAL_IP>:7234`
+
+�🚀 Future Enhancements
 
 Jenkins CI/CD pipeline integration
 
