@@ -93,11 +93,7 @@ docker build -t sathyabama-chatbot .
 
 # Run the container (Mapping port 7234)
 # Note: You must provide your GEMINI_API_KEY as an env variable
-docker run -d \
-  -p 7234:7234 \
-  --name chatbot \
-  -e GEMINI_API_KEY="your_api_key_here" \
-  sathyabama-chatbot
+docker run -d -p 7234:7234 --name chatbot sathyabama-chatbot
 
 # Verify container status
 docker ps
