@@ -19,7 +19,7 @@ LOG_FILE = "chat_log.json"
 # 🛑 CRITICAL FIX 2: Initialize GenerativeModel and start_chat()
 # Use a modern, multi-turn chat model (like gemini-2.5-flash) 
 # and let the SDK manage the history (chat_session).
-model_name = "gemini-2.5-flash"
+model_name = "models/gemini-flash-latest"
 chat_session = None # Initialize to None
 
 try:
@@ -1086,16 +1086,28 @@ def get_gemini_response(user_input):
     global chat_session
     
     if chat_session is None:
-        return "Gemini model is not configured. Please check the server's API key and connection."
+        try:
+            model = genai.GenerativeModel(model_name)
+            chat_session = model.start_chat(history=[])
+        except Exception as e:
+            return f"Gemini configuration failed: {str(e)}. Please check your API key."
 
     try:
-        # Increased max_output_tokens to prevent truncation
+        # Safety settings to allow all content (prevents truncation from filters)
+        safety_settings = [
+            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+        ]
+
         response = chat_session.send_message(
             user_input,
             generation_config={
                 "temperature": 0.7,
                 "max_output_tokens": 1024, 
-            }
+            },
+            safety_settings=safety_settings
         )
 
         bot_reply = response.text.strip() if response and response.text else "I couldn’t generate a response."
@@ -1143,9 +1155,6 @@ if __name__ == "__main__":
 
         bot_out = generate_response(user_inp)
         print("Bot:", bot_out)
-
-        # Log conversation
-        log_conversation(user_inp, bot_out)
 
         # Log conversation
         log_conversation(user_inp, bot_out)
